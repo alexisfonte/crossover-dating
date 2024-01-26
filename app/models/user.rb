@@ -2,7 +2,7 @@ class User < ApplicationRecord
     has_secure_password
     has_many :matches
     has_many :viewed_user, through: :matches
-    # If all those data are submitted seperately, the if: :first_name is required, otherwise the create method won't pass validation
+
     validates :firstname, presence: true, if: :firstname
     validates :dob_day, presence: true, numericality: { in: 1..31 }, if: :dob_day
     validates :dob_month, presence: true, numericality: { in: 1..12 }, if: :dob_month
@@ -22,10 +22,8 @@ class User < ApplicationRecord
       end
       user_viewed_user_ids.unshift(self.id)
       if params[:gender_interest] == "everyone"
-        # return User.all.where.not(id: user_viewed_user_ids).and(User.all.where(gender_interest: params[:gender_identity]).or(User.all.where(gender_interest: "everyone")))
         return User.all.where.not(id: user_viewed_user_ids)
       else
-        # return User.all.where.not(id: user_viewed_user_ids).where(gender_identity: params[:gender_interest]).and(User.all.where(gender_interest: params[:gender_identity]).or(User.all.where(gender_interest: "everyone")))
         return User.all.where.not(id: user_viewed_user_ids).where(gender_identity: params[:gender_interest])
       end
     end

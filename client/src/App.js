@@ -1,24 +1,87 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Home from "./pages/Home";
+import Onboarding from "./pages/Onboarding";
+import Dashboard from "./pages/Dashboard";
+import Account from "./pages/Account";
 
-function App() {
+function App({ cable }) {
+  const [user, setUser] = useState({});
+  const [showAuth, setShowAuth] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showViewedUser, setShowViewedUser] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/me").then((r) => {
+      if (r.ok) {
+        r.json().then((data) => setUser(data));
+      }
+    });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <div className="">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  user={user}
+                  setUser={setUser}
+                  showAuth={showAuth}
+                  setShowAuth={setShowAuth}
+                />
+              }
+            />
+            <Route
+              path="/onboarding"
+              element={
+                <Onboarding
+                  user={user}
+                  setUser={setUser}
+                  showAuth={showAuth}
+                  isEditingProfile={isEditingProfile}
+                />
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <Dashboard
+                  user={user}
+                  setUser={setUser}
+                  cable={cable}
+                  showAuth={showAuth}
+                  setShowAuth={setShowAuth}
+                  showViewedUser={showViewedUser}
+                  setShowViewedUser={setShowViewedUser}
+                />
+              }
+            />
+            <Route
+              path="/account"
+              element={
+                <Account
+                  user={user}
+                  showViewedUser={showViewedUser}
+                  setShowViewedUser={setShowViewedUser}
+                  setIsEditingProfile={setIsEditingProfile}
+                  showAuth={showAuth}
+                  setShowAuth={setShowAuth}
+                  setUser={setUser}
+                />
+              }
+            />
+            <Route
+              path="/reset_password/:token"
+              element={<h1>Onboarding Page</h1>}
+            />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </>
   );
 }
 
